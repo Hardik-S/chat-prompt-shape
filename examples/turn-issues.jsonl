@@ -1,0 +1,2 @@
+{"id":"example-3","messages":[{"role":"assistant","content":"This ends on assistant."}]}
+{"id":"example-4","messages":[{"role":"user","content":"First."},{"role":"user","content":"Repeated speaker."}]}

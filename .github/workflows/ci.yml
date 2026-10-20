@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ['3.10', '3.13']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install . pytest
+      - run: python -m pytest -q
+      - run: chat-prompt-shape --help
+      - run: chat-prompt-shape examples/valid.jsonl
+      - run: python -c "import subprocess,sys; p=subprocess.run(['chat-prompt-shape','examples/turn-issues.jsonl'],capture_output=True,text=True); assert p.returncode == 1 and p.stdout == '{\"status\":\"turn_issues\",\"record_count\":2,\"invalid_turn_lines\":[1,2]}\\n' and not p.stderr"

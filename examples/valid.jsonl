@@ -1,0 +1,2 @@
+{"id":"example-1","messages":[{"role":"user","content":"Summarize this synthetic note."}]}
+{"id":"example-2","messages":[{"role":"system","content":"Use concise wording."},{"role":"user","content":"Give an example."},{"role":"assistant","content":"A synthetic example."},{"role":"user","content":"Thanks."}]}
