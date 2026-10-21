@@ -144,3 +144,18 @@ def test_installed_private_argv_is_quiet(tmp_path, kind):
     exe = Path(sysconfig.get_path("scripts")) / ("chat-prompt-shape.exe" if os.name == "nt" else "chat-prompt-shape")
     result = subprocess.run([str(exe), *args], capture_output=True, text=True)
     assert (result.returncode, result.stdout, result.stderr) == (2, '{"status":"invalid_input"}\n', "")
+
+
+@pytest.mark.parametrize("depth", [400, 2000])
+@pytest.mark.parametrize("late", [False, True])
+def test_installed_nested_invalid_is_quiet(tmp_path, depth, late):
+    import os
+    import subprocess
+    import sysconfig
+    from pathlib import Path
+    path = tmp_path / "PRIVATE_NESTED.jsonl"
+    prefix = row([msg("user", "PRIVATE_CONTENT")]) + "\n" if late else ""
+    path.write_bytes((prefix + "[" * depth + "0" + "]" * depth).encode())
+    exe = Path(sysconfig.get_path("scripts")) / ("chat-prompt-shape.exe" if os.name == "nt" else "chat-prompt-shape")
+    result = subprocess.run([str(exe), str(path)], capture_output=True, text=True)
+    assert (result.returncode, result.stdout, result.stderr) == (2, '{"status":"invalid_input"}\n', "")

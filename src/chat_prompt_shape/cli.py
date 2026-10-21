@@ -69,10 +69,10 @@ def validate(data: bytes) -> dict[str, Any]:
             raise InvalidInput
         try:
             value = json.loads(line, object_pairs_hook=_object, parse_constant=_reject_constant)
-        except (json.JSONDecodeError, InvalidInput, ValueError) as exc:
+            if _has_surrogate(value):
+                raise InvalidInput
+        except (json.JSONDecodeError, InvalidInput, ValueError, RecursionError) as exc:
             raise InvalidInput from exc
-        if _has_surrogate(value):
-            raise InvalidInput
         if not isinstance(value, dict) or set(value) != {"id", "messages"}:
             raise InvalidInput
         ident, messages = value["id"], value["messages"]
