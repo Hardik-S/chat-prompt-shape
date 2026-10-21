@@ -102,12 +102,9 @@ def main(argv: list[str] | None = None) -> int:
         sys.stdout.write("usage: chat-prompt-shape PROMPTS.jsonl\nValidate normalized synthetic chat-generation turn shapes.\n")
         return 0
     if len(args) != 1:
-        reason = "missing input path" if not args else ("extra arguments" if len(args) > 1 else "unknown option")
-        sys.stderr.write(f"chat-prompt-shape: {reason}\n")
         sys.stdout.write('{"status":"invalid_input"}\n')
         return 2
     if args[0].startswith("-"):
-        sys.stderr.write("chat-prompt-shape: unknown option\n")
         sys.stdout.write('{"status":"invalid_input"}\n')
         return 2
     try:

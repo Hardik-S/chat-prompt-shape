@@ -93,16 +93,16 @@ def test_cli_help_and_private_argument_diagnostics(tmp_path, capsys):
     assert main([]) == 2
     captured = capsys.readouterr()
     assert captured.out == '{"status":"invalid_input"}\n'
-    assert "missing" in captured.err and "path" in captured.err
+    assert captured.err == ""
     assert main(["private-fixture", "private-extra"]) == 2
     captured = capsys.readouterr()
     assert captured.out == '{"status":"invalid_input"}\n'
-    assert "extra" in captured.err
+    assert captured.err == ""
     assert "private" not in captured.out + captured.err
     assert main(["--private-secret"]) == 2
     captured = capsys.readouterr()
     assert captured.out == '{"status":"invalid_input"}\n'
-    assert "unknown" in captured.err
+    assert captured.err == ""
     assert "private" not in captured.out + captured.err
 
 
@@ -129,3 +129,18 @@ def test_missing_file_is_private_and_fixed(tmp_path, capsys):
     assert captured.out == '{"status":"invalid_input"}\n'
     assert captured.err == ""
     assert "private" not in captured.out + captured.err
+
+
+@pytest.mark.parametrize("kind", ["missing", "extra", "unknown"])
+def test_installed_private_argv_is_quiet(tmp_path, kind):
+    import os
+    import subprocess
+    import sysconfig
+    from pathlib import Path
+    path = tmp_path / "PRIVATE_PATH.jsonl"
+    path.write_text(row([msg("user", "PRIVATE_CONTENT")]), encoding="utf-8")
+    args = {"missing": [], "extra": [str(path), "PRIVATE_EXTRA"],
+            "unknown": ["--PRIVATE_OPTION", str(path)]}[kind]
+    exe = Path(sysconfig.get_path("scripts")) / ("chat-prompt-shape.exe" if os.name == "nt" else "chat-prompt-shape")
+    result = subprocess.run([str(exe), *args], capture_output=True, text=True)
+    assert (result.returncode, result.stdout, result.stderr) == (2, '{"status":"invalid_input"}\n', "")

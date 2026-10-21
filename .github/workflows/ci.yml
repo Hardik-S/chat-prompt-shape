@@ -22,4 +22,4 @@ jobs:
       - run: python -m pytest -q
       - run: chat-prompt-shape --help
       - run: chat-prompt-shape examples/valid.jsonl
-      - run: python -c "import subprocess,sys; p=subprocess.run(['chat-prompt-shape','examples/turn-issues.jsonl'],capture_output=True,text=True); assert p.returncode == 1 and p.stdout == '{\"status\":\"turn_issues\",\"record_count\":2,\"invalid_turn_lines\":[1,2]}\\n' and not p.stderr"
+      - run: python tests/installed_acceptance.py
