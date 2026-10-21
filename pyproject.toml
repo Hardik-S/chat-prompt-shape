@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "chat-prompt-shape"
+version = "0.1.0"
+description = "Validate synthetic chat-generation prompt turn shapes"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+
+[project.scripts]
+chat-prompt-shape = "chat_prompt_shape.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
